@@ -24,7 +24,6 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "md5.h"
-#include <dirent.h>
 
 #define M                   (1024*1024)
 #define BUFFER_SIZE         1024            //UDP分包大小
@@ -93,7 +92,7 @@ struct PackInfo{
 /** UDP接收包 **/
 struct RecvPack{
     struct PackInfo head;
-    char            buf[BUFFER_SIZE];
+    char   buf[BUFFER_SIZE];
 };
 
 /** Socket包裹函数 **/
@@ -117,7 +116,7 @@ size_t get_filesize(char *path);
 char *Md5(char * filename, char *md5);
 
 
-/** 返回命令类型:PUT/GET     、TCP/UDP等 **/
+/** 返回命令类型:PUT/GET、TCP/UDP等 **/
 int get_cmd(char *str);
 
 

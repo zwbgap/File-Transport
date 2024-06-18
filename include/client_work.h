@@ -66,12 +66,11 @@ void recv_file(struct command *cmd, struct ip_port *ip);
 /** 上传文件 **/
 void send_block(struct command *cmd, struct ip_port *ip);
 
+/** 获取文件列表**/
+void get_file_list(struct command *cmd, const char *ip);
 
 /** 初始化UDP服务端 **/
 void udp_serv_init(struct sockaddr_in *server_addr, struct ip_port *ip);
-
-/** 获取文件列表**/
-void get_file_list(int sock_fd);
 
 #endif
 
