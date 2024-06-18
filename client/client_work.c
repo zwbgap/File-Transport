@@ -186,7 +186,7 @@ void exec_cmd(struct command *cmd, struct ip_port *ip){
     if (get_cmd(cmd->filename)==EXIT)
         exit(0);
     if (get_cmd(cmd->filename) == LS){
-        printf("l3\n");
+        //printf("l3\n");
         send_cmd(cmd, ip);  // 发送命令到服务器
         int sock_fd = Client_init(ip, TCP);
         if (sock_fd < 0) {
@@ -196,7 +196,8 @@ void exec_cmd(struct command *cmd, struct ip_port *ip){
         
         get_file_list(sock_fd);
         close(sock_fd);
-        return;
+        //return;
+        get_input(cmd, ip);
     }
     /** 以下两步用TCP传送 **/
     send_cmd(cmd, ip);    
@@ -434,29 +435,80 @@ void get_file_list(int sock_fd) {
     printf("Receiving file list from server...\n");
     bzero(file_list, sizeof(file_list));
 
-    // 使用循环读取数据，确保接收到完整的数据
-    ssize_t total_bytes_read = 0;
-    while (1) {
-        ssize_t bytes_read = read(sock_fd, file_list + total_bytes_read, sizeof(file_list) - total_bytes_read - 1);
-        if (bytes_read < 0) {
-            perror("read");
-            close(sock_fd);
-            return;
-        } else if (bytes_read == 0) {
-            // 服务器关闭连接，表示数据读取完毕
-            break;
-        } else {
-            total_bytes_read += bytes_read;
-            if (total_bytes_read >= sizeof(file_list) - 1) {
-                // 缓冲区已满，停止读取
-                break;
-            }
-        }
+    // // 使用循环读取数据，确保接收到完整的数据
+    // ssize_t total_bytes_read = 0;
+    // while (1) {
+    //     ssize_t bytes_read = read(sock_fd, file_list + total_bytes_read, sizeof(file_list) - total_bytes_read - 1);
+    //     if (bytes_read < 0) {
+    //         perror("read");
+    //         close(sock_fd);
+    //         return;
+    //     } else if (bytes_read == 0) {
+    //         // 服务器关闭连接，表示数据读取完毕
+    //         break;
+    //     } else {
+    //         total_bytes_read += bytes_read;
+    //         if (total_bytes_read >= sizeof(file_list) - 1) {
+    //             // 缓冲区已满，停止读取
+    //             break;
+    //         }
+    //     }
+    // }
+
+    // // 确保字符串以 null 结尾
+    // file_list[total_bytes_read] = '\0';
+
+    // // 打印文件列表
+    // printf("Server file list:\n%s\n", file_list);
+    char *data = NULL;
+    char buffer[BUFFER_SIZE];
+    //socklen_t len;
+    ssize_t bytes_received, total_bytes_received = 0;
+    size_t data_size = 0;
+
+    // //接收数据
+    
+    // while ((bytes_received = recv(sock_fd, buffer, BUFFER_SIZE, 0)) > 0) {
+    //     total_bytes_received += bytes_received;
+    // }
+
+    // if (bytes_received < 0) {
+    //     perror("recv failed");
+    // } else {
+    //     printf("Received total %zd bytes\n", total_bytes_received);
+    // }
+     // 动态分配内存以存储接收到的数据
+    data = (char *)malloc(BUFFER_SIZE);
+    if (data == NULL) {
+        perror("malloc failed");
+        close(sock_fd);
+        exit(EXIT_FAILURE);
     }
 
-    // 确保字符串以 null 结尾
-    file_list[total_bytes_read] = '\0';
+    // 正确的接收数据方式：在循环中调用 recv
+    while ((bytes_received = recv(sock_fd, buffer, BUFFER_SIZE, 0)) > 0) {
+        // 重新分配内存以存储更多的数据
+        data = (char *)realloc(data, data_size + bytes_received);
+        if (data == NULL) {
+            perror("realloc failed");
+            close(sock_fd);
+            exit(EXIT_FAILURE);
+        }
+        // 将接收到的数据复制到 data 缓冲区
+        memcpy(data + data_size, buffer, bytes_received);
+        data_size += bytes_received;
+        total_bytes_received += bytes_received;
+    }
 
-    // 打印文件列表
-    printf("Server file list:\n%s\n", file_list);
+    if (bytes_received < 0) {
+        perror("recv failed");
+    } else {
+        printf("Received total %zd bytes.\n", total_bytes_received);
+        // 打印接收到的数据
+        printf("Server file list:\n%.*s\n", (int)data_size, data);
+    }
+
+    // 释放分配的内存
+    free(data);
+    close(sock_fd);
 }

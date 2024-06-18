@@ -19,11 +19,12 @@ int main(){
         printf("\nWait for task...\n");
         bzero(&cmd,sizeof(struct command));
         int sockfd = recv_cmd(&cmd);
+        printf("%d/n",sockfd);
         printf("cmd:%s -%s -%s\n",cmd.filename,cmd.cmd,cmd.mode); 
         
         if(get_cmd(cmd.filename) == LS){
             //printf("ls1\n");
-            send_file_list(sockfd);
+            send_file_list();
             //system("ls");
             continue;
         }

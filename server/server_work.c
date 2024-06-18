@@ -302,9 +302,10 @@ over:
  * @param client_sock_fd 客户端套接字
  * 该函数获取服务器上的文件列表，并发送给客户端。
  */
-void send_file_list(int clientfd) {
-     struct dirent *entry;
-    DIR *dp = opendir(".");
+void send_file_list() {
+    int clientfd = Accept(listenfd, (struct sockaddr *) &cliaddr, (socklen_t *)&clilen);
+    struct dirent *entry;
+    DIR *dp = opendir("./serverFile");
 
     if (dp == NULL) {
         perror("opendir");
@@ -326,5 +327,6 @@ void send_file_list(int clientfd) {
     if (send(clientfd, file_list, strlen(file_list), 0) == -1) {
         perror("send");
     }
+    close(clientfd);
     printf("completed!");
 }

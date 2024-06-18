@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 
 #define PORT 8080
+//#define DATA_SIZE 65535
 #define DATA_SIZE 1024
 
 int main() {

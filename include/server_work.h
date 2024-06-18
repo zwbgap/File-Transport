@@ -23,7 +23,7 @@ void recv_block(struct command *cmd);
 void send_file(struct command *cmd);
 
 /** 获取服务器上的文件列表，并发送给客户端。*/
-void send_file_list(int clientfd);
+void send_file_list();
 
 #endif
 

@@ -1,0 +1,19 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch master
+# Changes to be committed:
+#	deleted:    bin/client
+#	deleted:    bin/clientFile/002.mp4
+#	deleted:    bin/server
+#	deleted:    bin/serverFile/002.mp4
+#
+# Changes not staged for commit:
+#	modified:   bin/clientFile/client
+#	modified:   bin/serverFile/server
+#	modified:   client/client_work.c
+#	modified:   include/server_work.h
+#	modified:   server/server.c
+#	modified:   server/server_work.c
+#
